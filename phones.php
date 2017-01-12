@@ -9,10 +9,12 @@ define("MAX_PHONES_PER_CASE", 10000);
 
 define("MAX_NUMBER_LENGTH", 10);
 
-while ($line = fgets(STDIN)){
+define("READ_BUFFER", 1024);
+
+while ($line = stream_get_line(STDIN, READ_BUFFER, PHP_EOL)){
 	$int = line_to_int($line);
 	switch($nextState){
-		// read how many test cases we have
+		// read how many test cases do we have
 		case NULL :
 			if($int<MIN_TEST_CASES || $int>MAX_TEST_CASES)exit(2);
 			$testCases = $int;
@@ -28,16 +30,20 @@ while ($line = fgets(STDIN)){
 			$testCases--;
 			$current_line_in_case = 0;
 			$nextState = "read_phones";
-			$valid = "NO";
+			unset($numArray);
+			unset($inconsistenceFlag);
+			$numArray = array();
 			break;
 
 		// read and validate phones
 		case "read_phones":
-			if(strlen($string)-1>MAX_NUMBER_LENGTH)exit(6);
+			$length=strlen($line);
+			if($length>MAX_NUMBER_LENGTH)exit(6);
 			$current_line_in_case++;
-//			echo "phone $int, current testCases $testCases, current lines2read $lines2read, current_line_in_case: $current_line_in_case\n";
+			// todo: check dupes and throw inconsistence
+			$numArray[$length][] = $line;
 			if($current_line_in_case===$lines2read){
-				print_valid($valid);
+				check_consistent($numArray,$inconsistenceFlag);
 				$nextState = "get_phones_count";
 			}
 			break;
@@ -47,10 +53,22 @@ if($testCases != 0)exit(5);
 
 function line_to_int($string){
 	$int = (int) $string;
-	if(strlen($string) === strlen((string) $int)+1)
+	if(strlen($string) === strlen((string) $int))
 		return $int;
 	else
 		exit(1);
+}
+
+function check_consistent($numArray,$inconsistenceFlag) {
+	if($inconsistenceFlag) print_valid("NO");
+	else{
+		var_dump($numArray);
+		$lenIndex = array_keys($numArray);
+		sort($lenIndex);
+		var_dump($lenIndex);
+		$valid = "NO";
+		print_valid($valid);
+	}
 }
 
 function print_valid($valid){
