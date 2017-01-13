@@ -1,19 +1,14 @@
 <?php
-// Even we going implement it with php - we will keep things simple without any 
-// layer of interfaces and classes - we will just build simplest state machine.
-
-define("MAX_NUMBER_LENGTH", 10);
 define("READ_BUFFER", 1024);
 
 fscanf(STDIN, "%d\n", $testCases);
 $nextState = "get_phones_count";
 
 while ($line = stream_get_line(STDIN, READ_BUFFER, PHP_EOL)){
-	$int = (int) $line;
 	switch($nextState){
 		// read how many phones in the current test case
 		case "get_phones_count":
-			$lines2read = $int; 
+			$lines2read = (int) $line; 
 			$testCases--;
 			$current_line_in_case = 0;
 			$nextState = "read_phones";
