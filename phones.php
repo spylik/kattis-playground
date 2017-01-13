@@ -29,6 +29,7 @@ while ($line = stream_get_line(STDIN, READ_BUFFER, PHP_EOL)){
 			$testCases--;
 			$current_line_in_case = 0;
 			$nextState = "read_phones";
+			unset($inconsistenceFlag);
 			unset($numArray);
 			$numArray = array();
 			break;
@@ -36,11 +37,11 @@ while ($line = stream_get_line(STDIN, READ_BUFFER, PHP_EOL)){
 		// read and validate phones
 		case "read_phones":
 			$length=strlen($line);
-			if($length>MAX_NUMBER_LENGTH)exit(6);
+			if($length>MAX_NUMBER_LENGTH)$inconsistenceFlag = true;
 			$current_line_in_case++;
 			$numArray[$length][] = $line;
 			if($current_line_in_case===$lines2read){
-				check_consistent($numArray);
+				check_consistent($numArray,$inconsistenceFlag);
 				$nextState = "get_phones_count";
 			}
 			break;
@@ -56,7 +57,7 @@ function line_to_int($string){
 		exit(1);
 }
 
-function check_consistent($numArray) {
+function check_consistent($numArray,$inconsistenceFlag) {
 	$lenIndex = array_keys($numArray);
 	sort($lenIndex,SORT_NUMERIC);
 	$merged = array();
