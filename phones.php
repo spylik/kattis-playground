@@ -20,18 +20,17 @@ while ($line = stream_get_line(STDIN, READ_BUFFER, PHP_EOL)){
 		// read and validate phones
 		case "read_phones":
 			$length=strlen($line);
-			if(array_key_exists($line, $numArray)){
-				$inconsistenceFlag = true;
-			}else{
+//			if(array_key_exists($line."\0", $numArray)){
+//				$inconsistenceFlag = true;
+//			}else{
 				$numArray[$line."\0"] = $length;
-			}
+//			}
 			$current_line_in_case++;
 			if($current_line_in_case===$lines2read){
 				if(!$inconsistenceFlag){
 					foreach($numArray as $key=>$ln){
-						$stringKey = (string) $key;
 						for ($i=0; $i<$ln-1; $i++) {
-							$part=$part.$stringKey[$i];
+							$part=$part.$key[$i];
 							if(array_key_exists($part."\0", $numArray)){
 								$inconsistenceFlag = true;
 								break;
