@@ -23,7 +23,6 @@ while ($line = stream_get_line(STDIN, READ_BUFFER, PHP_EOL)){
 		
 		// read how many phones in the current test case
 		case "get_phones_count":
-//			echo"in get_phones_count current testCases $testCases\n";
 			if($testCases===0)exit(4);
 			if($int<MIN_PHONES_PER_CASE || $int>MAX_PHONES_PER_CASE)exit(3);
 			$lines2read = $int; 
@@ -31,7 +30,6 @@ while ($line = stream_get_line(STDIN, READ_BUFFER, PHP_EOL)){
 			$current_line_in_case = 0;
 			$nextState = "read_phones";
 			unset($numArray);
-			unset($inconsistenceFlag);
 			$numArray = array();
 			break;
 
@@ -40,10 +38,9 @@ while ($line = stream_get_line(STDIN, READ_BUFFER, PHP_EOL)){
 			$length=strlen($line);
 			if($length>MAX_NUMBER_LENGTH)exit(6);
 			$current_line_in_case++;
-			// todo: check dupes and throw inconsistence
 			$numArray[$length][] = $line;
 			if($current_line_in_case===$lines2read){
-				check_consistent($numArray,$inconsistenceFlag);
+				check_consistent($numArray);
 				$nextState = "get_phones_count";
 			}
 			break;
@@ -59,16 +56,40 @@ function line_to_int($string){
 		exit(1);
 }
 
-function check_consistent($numArray,$inconsistenceFlag) {
-	if($inconsistenceFlag) print_valid("NO");
+function check_consistent($numArray) {
+	$lenIndex = array_keys($numArray);
+	sort($lenIndex,SORT_NUMERIC);
+	$merged = array();
+	foreach($lenIndex as &$value) {
+		if(have_dupes($numArray[$value]) === true || is_prefixed($numArray[$value], $merged) === true){
+			$inconsistenceFlag = true; break;
+		}
+		$merged = array_merge($merged, $numArray[$value]);
+	}; unset ($value); unset ($merged);
+	if(isset($inconsistenceFlag)) print_valid("NO");
+	else print_valid("YES");
+}
+
+function is_prefixed($array, $prefixArray){
+	if(count($prefixArray)==0){return false;}
 	else{
-		var_dump($numArray);
-		$lenIndex = array_keys($numArray);
-		sort($lenIndex);
-		var_dump($lenIndex);
-		$valid = "NO";
-		print_valid($valid);
+		foreach ($array as &$value) {
+			foreach($prefixArray as &$prefix){
+				$compare = strpos($value, $prefix);
+				if($compare===0){
+					$inconsistenceFlag = true; break;
+				}
+			}unset($prefix);
+			if($inconsistenceFlag) break;
+		}unset($value);
 	}
+	if($inconsistenceFlag)return true;
+	else return false;
+}
+
+function have_dupes($array) {
+	if(count(array_unique($array))!=count($array))return true;
+	else return false;
 }
 
 function print_valid($valid){
