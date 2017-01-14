@@ -1,7 +1,9 @@
 <?php
 define("READ_BUFFER", 1024);
 
-fscanf(STDIN, "%d\n", $testCases);
+$answers = array();
+
+$testCases = stream_get_line(STDIN, READ_BUFFER, PHP_EOL);
 $nextState = "get_phones_count";
 
 while ($line = stream_get_line(STDIN, READ_BUFFER, PHP_EOL)){
@@ -19,30 +21,24 @@ while ($line = stream_get_line(STDIN, READ_BUFFER, PHP_EOL)){
 
 		// read and validate phones
 		case "read_phones":
-			$length=strlen($line);
-			$numArray[$line."\0"] = $length;
+			$numArray[] = $line;
 			$current_line_in_case++;
 			if($current_line_in_case===$lines2read){
-				if(!$inconsistenceFlag){
-					foreach($numArray as $key=>$ln){
-						for ($i=0; $i<$ln-1; $i++) {
-							$part=$part.$key[$i];
-							if(array_key_exists($part."\0", $numArray)){
-								$inconsistenceFlag = true;
-								break;
-							}
-						}unset($part);
-						if(isset($inconsistenceFlag))break;
+				sort($numArray, SORT_STRING);
+				foreach($numArray as $key => &$phone){
+					if(strncmp($phone, $numArray[$key+1], strlen($phone))===0){
+						$inconsistenceFlag = true;
+						break;
 					}
 				}
-				if($inconsistenceFlag)print_valid("NO");
-				else print_valid("YES");
+				if($inconsistenceFlag)$answers[] = "NO";
+				else $answers[] = "YES";
 				$nextState = "get_phones_count";
 			}
 			break;
 	}
 }
 
-function print_valid($valid){
+foreach($answers as $valid){
 	fprintf(STDOUT, "%s\n", $valid);
 }
