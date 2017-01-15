@@ -1,4 +1,8 @@
 <?php
+/* Solution for kattis phonelist problem: (https://open.kattis.com/problems/phonelist)
+ * Current implementation: 0.32s (top1 among other implementations in PHP dated on 14.01.2017)
+*/
+
 define("READ_BUFFER", 1024);
 
 $answers = array();

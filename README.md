@@ -1,5 +1,5 @@
-# Kattis phonelist problem
+# Kattis problems
 
-[Phone List problem](https://open.kattis.com/problems/phonelist) is a programming challenge. 
+[Kattis](https://open.kattis.com/problems) is platform for train brain with programming challenge.
 
-This is my implementation in PHP which dated on 14.01.2017 the fastest among other PHP sumbissions (0.32 s).
+This repo is kind of playground and contain my solutions for different problems.
